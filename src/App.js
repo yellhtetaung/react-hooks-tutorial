@@ -1,51 +1,45 @@
-import { useState, useEffect } from "react";
-import "./App.css";
+import { useState, useReducer } from "react";
 
-const url = "https://api.github.com/users";
+const intialValue = {
+  people: [],
+};
+
+function reducer(person, action) {
+  if (action.type === "INPUT_ADDED") {
+    const newPeople = [...person.people, action.payload];
+    return { ...person, people: newPeople };
+  }
+}
 
 function App() {
-  const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isError, setIsError] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
-  async function getUsers() {
-    const response = await fetch(url);
-    const users = await response.json();
-    if (response.status > 300) {
-      setIsError(true);
-      setIsLoading(false);
-    }
+  const [person, dispatch] = useReducer(reducer, intialValue);
 
-    setUsers(users);
-    setIsLoading(false);
-  }
+  function submitHandler(e) {
+    e.preventDefault();
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+    const newItem = { id: Math.random().toString(), name: inputValue };
 
-  if (isLoading) {
-    return <h1>Loading ....</h1>;
-  }
-
-  if (isError) {
-    return <h1>Opps!! Error ...</h1>;
+    dispatch({ type: "INPUT_ADDED", payload: newItem });
+    setInputValue("");
   }
 
   return (
-    <div className="container">
-      <h1>Github Users</h1>
-      <ul className="users">
-        {users.map((user) => {
-          return (
-            <li key={user.id}>
-              <img src={user.avatar_url} alt={user.login} />
-              <div>
-                <h4>{user.login}</h4>
-                <a href={user.html_url}>Profile</a>
-              </div>
-            </li>
-          );
+    <div>
+      <h1>Form</h1>
+      <form onSubmit={submitHandler}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder="Enter your text"
+        />
+        <button type="submit">Submit</button>
+      </form>
+      <ul>
+        {person.people.map((person) => {
+          return <li key={person.id}>{person.name}</li>;
         })}
       </ul>
     </div>
