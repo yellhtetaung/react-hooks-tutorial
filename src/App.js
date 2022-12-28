@@ -1,31 +1,28 @@
-import { useState } from "react";
-import Context from "./Context";
-import Form from "./Form";
-import List from "./List";
+import { useState, useEffect } from "react";
+import List from "./Memo";
 
 function App() {
-  const [inputValue, setInputValue] = useState("");
-  const [lists, setLists] = useState([]);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [editLists, setEditLists] = useState("");
+  const url = "https://jsonplaceholder.typicode.com/posts";
+  const [posts, setPosts] = useState([]);
+  const [count, setCount] = useState(0);
+
+  const fetchData = async () => {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    setPosts(data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [url]);
 
   return (
-    <Context.Provider
-      value={{
-        inputValue,
-        setInputValue,
-        lists,
-        setLists,
-        isEditMode,
-        setIsEditMode,
-        editLists,
-        setEditLists,
-      }}
-    >
-      Context Api
-      <Form />
-      <List />
-    </Context.Provider>
+    <div>
+      <h1>Counter : {count}</h1>
+      <button onClick={() => setCount(count + 1)}>Increase</button>
+      <List posts={posts} />
+    </div>
   );
 }
 
