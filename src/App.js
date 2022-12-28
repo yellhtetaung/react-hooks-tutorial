@@ -7,12 +7,7 @@ export default function App() {
   function handleForm(e) {
     e.preventDefault();
     setText(inputRef.current.value);
-    console.log(inputRef.current.value);
   }
-
-  useEffect(() => {
-    console.log(inputRef);
-  });
 
   return (
     <div>
