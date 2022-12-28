@@ -1,22 +1,23 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
+import { useCustomHook } from "./CustomHook";
 
 export default function App() {
-  const [text, setText] = useState("");
-  const inputRef = useRef(null);
+  const url = "https://jsonplaceholder.typicode.com/posts";
+  const [posts, setPosts] = useState(url);
 
-  function handleForm(e) {
-    e.preventDefault();
-    setText(inputRef.current.value);
-  }
+  const { loading, data } = useCustomHook(url);
 
   return (
     <div>
-      <h1>useRef</h1>
-      <form onSubmit={handleForm}>
-        <input type="text" ref={inputRef} placeholder="Enter your text" />
-        <button type="submit">Submit</button>
-        <h4>{text}</h4>
-      </form>
+      {loading ? (
+        <h1>Loading ...</h1>
+      ) : (
+        <ul>
+          {data.map((post) => (
+            <li key={post.id}>{post.title}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
