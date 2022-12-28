@@ -1,42 +1,27 @@
-import { useState, useMemo } from "react";
-
-const calculation = (number) => {
-  console.log("Render Count");
-  for (let i = 0; i < 1000000; i++) {
-    number += 1;
-  }
-
-  return number;
-};
+import { useState, useRef, useEffect } from "react";
 
 export default function App() {
-  const [count, setCount] = useState(0);
-  const [todo, setTodo] = useState([]);
-  const heavyCalculation = useMemo(() => calculation(count), [count]);
+  const [text, setText] = useState("");
+  const inputRef = useRef(null);
 
-  const increase = () => {
-    setCount((preCount) => preCount + 1);
-  };
+  function handleForm(e) {
+    e.preventDefault();
+    setText(inputRef.current.value);
+    console.log(inputRef.current.value);
+  }
 
-  const addToDo = () => {
-    setTodo((todo) => {
-      return [...todo, { item: "New List added" }];
-    });
-  };
+  useEffect(() => {
+    console.log(inputRef);
+  });
 
   return (
     <div>
-      <h1>useMemo</h1>
-      <h4>Count:{count}</h4>
-      <button onClick={increase}>Increase</button>
-      <hr />
-      <h2>Expensie/heavy Calculation</h2>
-      <button onClick={addToDo}>Add</button>
-      {todo.map((t, index) => {
-        return <p key={index}>{`${t.item} - ${index}`}</p>;
-      })}
-
-      <h1>{heavyCalculation}</h1>
+      <h1>useRef</h1>
+      <form onSubmit={handleForm}>
+        <input type="text" ref={inputRef} placeholder="Enter your text" />
+        <button type="submit">Submit</button>
+        <h4>{text}</h4>
+      </form>
     </div>
   );
 }
