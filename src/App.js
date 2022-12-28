@@ -1,29 +1,33 @@
-import { useState, useEffect } from "react";
-import List from "./Memo";
+import { useState, useCallback } from "react";
+import { Lists } from "./data";
+import ToDo from "./ToDo";
 
-function App() {
-  const url = "https://jsonplaceholder.typicode.com/posts";
-  const [posts, setPosts] = useState([]);
+export default function App() {
   const [count, setCount] = useState(0);
+  const [todo, setTodo] = useState(Lists);
 
-  const fetchData = async () => {
-    const response = await fetch(url);
-    const data = await response.json();
-
-    setPosts(data);
+  const increase = () => {
+    setCount((preCount) => preCount + 1);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [url]);
+  const deleteItem = useCallback(
+    (id) => {
+      setTodo(
+        todo.filter((t) => {
+          return t.id !== id;
+        })
+      );
+    },
+    [todo]
+  );
 
   return (
     <div>
-      <h1>Counter : {count}</h1>
-      <button onClick={() => setCount(count + 1)}>Increase</button>
-      <List posts={posts} />
+      <h1>useCallBack</h1>
+      <h4>Count:{count}</h4>
+      <button onClick={increase}>Increase</button>
+      <hr />
+      <ToDo todo={todo} deleteItem={deleteItem} />
     </div>
   );
 }
-
-export default App;
